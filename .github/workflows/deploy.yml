@@ -35,7 +35,7 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/website-backend:latest
+          tags: ghcr.io/darktezi/website-backend:latest
 
       # Настройка SSH
       - name: Setup SSH
