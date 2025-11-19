@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: website_backend
+    ports:
+      - "8080:8080"
+    networks:
+      - webnet
+    restart: unless-stopped
+
+  frontend:
+    image: nginx:latest
+    container_name: website_frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html
+      - ./assets:/usr/share/nginx/html/assets
+      - ./images:/usr/share/nginx/html/images
+      - ./error:/usr/share/nginx/html/error
+    networks:
+      - webnet
+    restart: unless-stopped
+
+networks:
+  webnet:

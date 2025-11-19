@@ -1,0 +1,63 @@
+name: CD Deploy
+
+on:
+  push:
+    branches:
+      - master
+  release:
+    types: [published]
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Авторизация в GHCR
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Сборка backend-образа
+      - name: Build backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/website-backend:latest
+
+      # Настройка SSH
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Деплой на сервер
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.USER }}@${{ secrets.HOST }} "
+            echo '📁 Opening project directory...'
+            cd /home/darktezi/mysite/site
+
+            echo '📦 Pulling latest backend image...'
+            docker compose pull backend || true
+
+            echo '🚀 Starting application via docker compose...'
+            docker compose up -d --remove-orphans
+
+            echo '🧹 Cleaning unused images...'
+            docker image prune -f
+
+            echo '✅ Deployment completed!'
+          "
