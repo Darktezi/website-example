@@ -48,7 +48,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.USER }}@${{ secrets.HOST }} "
             echo '📁 Opening project directory...'
-            cd /home/darktezi/mysite/site
+            cd /home/darktezi/mysite/site2
 
             echo '📦 Pulling latest backend image...'
             docker compose pull backend || true
