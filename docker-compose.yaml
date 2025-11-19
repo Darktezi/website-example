@@ -7,7 +7,9 @@ services:
       dockerfile: Dockerfile
     container_name: website_backend
     ports:
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8180:8080"
+    volumes:
+      - backend_data:/app
     networks:
       - webnet
     restart: unless-stopped
@@ -16,7 +18,7 @@ services:
     image: nginx:latest
     container_name: website_frontend
     ports:
-      - "127.0.0.1:80:80"
+      - "127.0.0.1:8181:80"
     volumes:
       - ./index.html:/usr/share/nginx/html/index.html
       - ./assets:/usr/share/nginx/html/assets
@@ -26,5 +28,7 @@ services:
       - webnet
     restart: unless-stopped
 
+volumes:
+  backend_data:
 networks:
   webnet:
