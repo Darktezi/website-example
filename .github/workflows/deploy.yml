@@ -23,6 +23,7 @@ jobs:
             echo '📦 Pulling latest images...'
             cd /home/darktezi/mysite/site2
             docker compose pull || true
+            git pull origin master
             
             echo '🚀 Starting application...'
             docker compose up -d --remove-orphans
