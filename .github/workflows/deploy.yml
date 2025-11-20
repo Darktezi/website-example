@@ -17,12 +17,15 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.USER }}@${{ secrets.HOST }} "
-            echo '🔄 Pulling latest images...'
-            cd /home/darktezi/mysite/site2
-            docker compose pull
-            echo '🚀 Restarting containers...'
+            echo '🔐 Logging into GHCR...'
+            echo '${{ secrets.TOKEN }}' | docker login ghcr.io -u '${{ github.actor }}' --password-stdin
+            
+            echo '📦 Pulling latest images...'
+            docker compose pull || true
+            
+            echo '🚀 Starting application...'
             docker compose up -d --remove-orphans
-            echo '🧹 Cleaning unused images...'
+            
+            echo '🧹 Cleaning up...'
             docker image prune -f
-            echo '✅ Deployment completed!'
           "
