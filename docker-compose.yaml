@@ -3,9 +3,6 @@ version: "3.9"
 services:
   backend:
     image: ghcr.io/darktezi/website-backend:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: website_backend
     ports:
       - "127.0.0.1:8180:8080"
